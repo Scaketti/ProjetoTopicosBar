@@ -5,9 +5,13 @@
  */
 package negocio;
 
+import dados.Conexao;
+import dados.ProdutoDAO;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import visao.TelaServidor;
 
@@ -16,15 +20,15 @@ import visao.TelaServidor;
  * @author Scaketti
  */
 public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInterface {
-    
-    public ServidorImpl(TelaServidor tela) throws RemoteException{
+
+    public ServidorImpl(TelaServidor tela) throws RemoteException {
         super();
     }
 
     @Override
     public int conectarAoServidor(String nome, String ip, int porta, int numTerminal) throws RemoteException {
         JOptionPane.showMessageDialog(null, "Nome do Cliente conectado: " + nome);
-        
+
         /*Boolean valido = false;
 
         //Verifica se possui algum cliente conectado com o mesmo apelido
@@ -71,11 +75,11 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
         }*/
         return -1;
     }
-    
+
     @Override
     public int conectarAoServidor(String nome, String ip, int porta) throws RemoteException {
         JOptionPane.showMessageDialog(null, "Nome do Atendente conectado: " + nome);
-        
+
         /*Boolean valido = false;
 
         //Verifica se possui algum cliente conectado com o mesmo apelido
@@ -124,12 +128,69 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
     }
 
     @Override
-    public int insereProduto() throws RemoteException {
-        return 0;
+    public int insereProduto(Produto p, String nome) throws RemoteException {
+        try {
+            Connection conn = Conexao.abrir();
+            ProdutoDAO pDAO = new ProdutoDAO(conn);
+
+            System.out.println("Nome: " + p.getNome());
+
+            System.out.println("retorno: " + pDAO.insereProduto(p));
+            
+            //insere log sobre o funcionario
+
+            conn.close();
+            return 0;
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            return -1;
+        }
     }
 
     @Override
-    public int alteraProduto() throws RemoteException {
+    public int alteraProduto(Produto p, String nome) throws RemoteException {
+        try {
+            Connection conn = Conexao.abrir();
+            ProdutoDAO pDAO = new ProdutoDAO(conn);
+
+            pDAO.alteraProduto(p);
+            
+            //insere log sobre o funcionario
+
+            conn.close();
+            return 0;
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            return -1;
+        }
+    }
+
+    @Override
+    public ArrayList<Produto> pesquisaProduto(String nomeFuncionario) throws RemoteException {
+        try {
+            Connection conn = Conexao.abrir();
+            ProdutoDAO pDAO = new ProdutoDAO(conn);
+            ArrayList<Produto> pBusca;
+
+            pBusca = pDAO.pesquisaProduto();
+            
+            //insere log sobre o funcionario
+            
+            conn.close();
+            return pBusca;
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            return null;
+        }
+    }
+    
+    @Override
+    public Produto pesquisaProduto(String nomeProduto, String nomeFuncionario) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public int excluiProduto(Produto p, String nome) throws RemoteException {
         return 0;
     }
 }

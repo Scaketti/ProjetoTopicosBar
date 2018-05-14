@@ -7,6 +7,7 @@ package negocio;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  *
@@ -35,11 +36,23 @@ public interface ServidorBarInterface extends Remote {
     //Retorna o valor 0 se sucesso e 1 caso falha
     public int DesconectarDoServidor(String ip) throws RemoteException;
     
-    //Insere produto no estoque
+//Insere produto no estoque
     //Retorna o valor 0 se sucesso e 1 caso falha
-    public int insereProduto() throws RemoteException;
+    public int insereProduto(Produto p, String nome) throws RemoteException;
     
     //Altera produto do estoque
     //Retorna o valor 0 se sucesso e 1 caso falha
-    public int alteraProduto() throws RemoteException;
+    public int alteraProduto(Produto p, String nome) throws RemoteException;
+    
+    //Pesquisa produto do estoque
+    //Retorna o valor 0 se sucesso e 1 caso falha
+    public ArrayList<Produto> pesquisaProduto(String nomeFuncionario) throws RemoteException;
+    
+    //Pesquisa produto do estoque
+    //Retorna o valor 0 se sucesso e 1 caso falha
+    public Produto pesquisaProduto(String nomeProduto, String nomeFuncionario) throws RemoteException;
+    
+    //Exclui produto do estoque
+    //Retorna o valor 0 se sucesso e 1 caso falha
+    public int excluiProduto(Produto p, String nome) throws RemoteException;
 }

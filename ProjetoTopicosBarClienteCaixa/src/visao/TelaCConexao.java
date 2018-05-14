@@ -17,11 +17,17 @@ public class TelaCConexao extends javax.swing.JFrame {
 
     ClienteCaixa c;
     TelaCaixa tCaixa;
+    ServidorBarInterface servidor;
 
     /**
      * Creates new form TelaTConexao
      */
-    public TelaCConexao() {
+    public TelaCConexao(ServidorBarInterface servidor) {
+        initComponents();
+        this.servidor = servidor;
+    }
+    
+    public TelaCConexao(){
         initComponents();
     }
 
@@ -80,11 +86,10 @@ public class TelaCConexao extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         c = new ClienteCaixa(txtNomeFunc.getText());
-        tCaixa = new TelaCaixa();
-
-        c.registraCliente(tCaixa);
-
+        
         try { //Tenta se conectar com o servidor
+            tCaixa = new TelaCaixa(c);
+            c.registraCliente(tCaixa);
             ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
             int validacao = servidor.conectarAoServidor(c.getNome(), c.getIp(), c.getPorta());
 
@@ -125,7 +130,6 @@ public class TelaCConexao extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(TelaCConexao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -134,7 +138,7 @@ public class TelaCConexao extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
     private javax.swing.JLabel lblNomeFunc;

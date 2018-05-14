@@ -5,17 +5,24 @@
  */
 package visao;
 
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import negocio.ClienteCaixa;
+import negocio.ServidorBarInterface;
+
 /**
  *
  * @author Scaketti
  */
 public class TelaCaixa extends javax.swing.JFrame {
-
+    ClienteCaixa c;
     /**
      * Creates new form TelaTerminal
      */
-    public TelaCaixa() {
+    public TelaCaixa(ClienteCaixa c) {
         initComponents();
+        this.c = c;
     }
 
     /**
@@ -32,8 +39,8 @@ public class TelaCaixa extends javax.swing.JFrame {
         txtNomeFunc = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         btnDesconectar = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnManterProdutos = new javax.swing.JButton();
+        btnFinalizarConta = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -50,9 +57,14 @@ public class TelaCaixa extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Manter Produtos");
+        btnManterProdutos.setText("Manter Produtos");
+        btnManterProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnManterProdutosActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Finalizar Conta");
+        btnFinalizarConta.setText("Finalizar Conta");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -69,10 +81,9 @@ public class TelaCaixa extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDesconectar))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                        .addComponent(btnManterProdutos, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)))
+                        .addComponent(btnFinalizarConta, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -87,8 +98,8 @@ public class TelaCaixa extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnManterProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFinalizarConta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -96,51 +107,20 @@ public class TelaCaixa extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
-        TelaCConexao tCConexao = new TelaCConexao();
+        TelaCConexao tCConexao = new TelaCConexao(null);
         tCConexao.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaCaixa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaCaixa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaCaixa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaCaixa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TelaCaixa().setVisible(true);
-            }
-        });
-    }
+    private void btnManterProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManterProdutosActionPerformed
+        TelaManterProdutos tManter = new TelaManterProdutos(c);
+        tManter.setVisible(true);
+    }//GEN-LAST:event_btnManterProdutosActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDesconectar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnFinalizarConta;
+    private javax.swing.JButton btnManterProdutos;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblNomeFunc;

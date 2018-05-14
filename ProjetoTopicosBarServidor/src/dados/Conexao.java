@@ -7,6 +7,8 @@ package dados;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,6 +28,8 @@ public class Conexao {
         // Capturar a conexão
         Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
         // Retorna a conexao aberta
+        System.out.println(conn);
+        
         return conn;
     }
 }
