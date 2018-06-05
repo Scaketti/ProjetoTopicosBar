@@ -5,6 +5,9 @@
  */
 package visao;
 
+import java.util.ArrayList;
+import negocio.ClienteCaixa;
+import negocio.ClienteTerminal;
 import negocio.Servidor;
 
 /**
@@ -14,14 +17,17 @@ import negocio.Servidor;
 public class TelaServidor extends javax.swing.JFrame {
 
     Servidor servidor;
+    private String logMsgClienteTerminal = "";
+    private String logMsgClienteCaixa = "";
+    
+    private ArrayList<ClienteTerminal> cTerminalConectados = new ArrayList();
+    private ArrayList<ClienteCaixa> cCaixaConectados = new ArrayList();
     
     /**
      * Creates new form Servidor
      */
     public TelaServidor() {
         initComponents();
-        
-        
     }
 
     /**
@@ -47,6 +53,11 @@ public class TelaServidor extends javax.swing.JFrame {
 
         cmbTipoMovimentacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Clientes", "Atendentes" }));
         cmbTipoMovimentacao.setEnabled(false);
+        cmbTipoMovimentacao.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbTipoMovimentacaoItemStateChanged(evt);
+            }
+        });
 
         pnlMovimentacao.setBorder(javax.swing.BorderFactory.createTitledBorder("Movimentação"));
 
@@ -124,7 +135,7 @@ public class TelaServidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConfServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfServidorActionPerformed
-        TelaConfServidor conf = new TelaConfServidor(servidor, this);
+        TelaConfServidor conf = new TelaConfServidor(this);
         conf.setVisible(true);
     }//GEN-LAST:event_btnConfServidorActionPerformed
 
@@ -132,6 +143,16 @@ public class TelaServidor extends javax.swing.JFrame {
         TelaCConectados tCliente = new TelaCConectados();
         tCliente.setVisible(true);
     }//GEN-LAST:event_btnClientesConectadosActionPerformed
+
+    private void cmbTipoMovimentacaoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbTipoMovimentacaoItemStateChanged
+        if(cmbTipoMovimentacao.getItemAt(cmbTipoMovimentacao.getSelectedIndex()).equals("Clientes")){
+            txtMovimentacao.setText(getLogMsgClienteTerminal());
+            System.out.println(getLogMsgClienteTerminal());
+        }else {
+            txtMovimentacao.setText(getLogMsgClienteCaixa());
+            System.out.println(getLogMsgClienteCaixa());
+        }
+    }//GEN-LAST:event_cmbTipoMovimentacaoItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -233,5 +254,61 @@ public class TelaServidor extends javax.swing.JFrame {
      */
     public void setTxtMovimentacao(javax.swing.JTextArea txtMovimentacao) {
         this.txtMovimentacao = txtMovimentacao;
+    }
+
+    /**
+     * @return the cTerminalConectados
+     */
+    public ArrayList<ClienteTerminal> getcTerminalConectados() {
+        return cTerminalConectados;
+    }
+
+    /**
+     * @param cTerminalConectados the cTerminalConectados to set
+     */
+    public void setcTerminalConectados(ArrayList<ClienteTerminal> cTerminalConectados) {
+        this.cTerminalConectados = cTerminalConectados;
+    }
+
+    /**
+     * @return the cCaixaConectados
+     */
+    public ArrayList<ClienteCaixa> getcCaixaConectados() {
+        return cCaixaConectados;
+    }
+
+    /**
+     * @param cCaixaConectados the cCaixaConectados to set
+     */
+    public void setcCaixaConectados(ArrayList<ClienteCaixa> cCaixaConectados) {
+        this.cCaixaConectados = cCaixaConectados;
+    }
+
+    /**
+     * @return the logMsgClienteTerminal
+     */
+    public String getLogMsgClienteTerminal() {
+        return logMsgClienteTerminal;
+    }
+
+    /**
+     * @param logMsgClienteTerminal the logMsgClienteTerminal to set
+     */
+    public void setLogMsgClienteTerminal(String logMsgClienteTerminal) {
+        this.logMsgClienteTerminal = logMsgClienteTerminal;
+    }
+
+    /**
+     * @return the logMsgClienteCaixa
+     */
+    public String getLogMsgClienteCaixa() {
+        return logMsgClienteCaixa;
+    }
+
+    /**
+     * @param logMsgClienteCaixa the logMsgClienteCaixa to set
+     */
+    public void setLogMsgClienteCaixa(String logMsgClienteCaixa) {
+        this.logMsgClienteCaixa = logMsgClienteCaixa;
     }
 }

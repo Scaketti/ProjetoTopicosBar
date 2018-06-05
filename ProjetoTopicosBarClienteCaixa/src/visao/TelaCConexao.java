@@ -26,8 +26,8 @@ public class TelaCConexao extends javax.swing.JFrame {
         initComponents();
         this.servidor = servidor;
     }
-    
-    public TelaCConexao(){
+
+    public TelaCConexao() {
         initComponents();
     }
 
@@ -86,13 +86,14 @@ public class TelaCConexao extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         c = new ClienteCaixa(txtNomeFunc.getText());
+        tCaixa = new TelaCaixa(c);
+        c.registraCliente(tCaixa);
         
         try { //Tenta se conectar com o servidor
-            tCaixa = new TelaCaixa(c);
-            c.registraCliente(tCaixa);
-            ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
+            ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "localhost" + ":" + "1099" + "/bar");
+            System.out.println(servidor);
             int validacao = servidor.conectarAoServidor(c.getNome(), c.getIp(), c.getPorta());
-
+            
             if (validacao == 0) {
                 tCaixa.setVisible(true);
                 this.dispose();
@@ -138,7 +139,7 @@ public class TelaCConexao extends javax.swing.JFrame {
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
     private javax.swing.JLabel lblNomeFunc;

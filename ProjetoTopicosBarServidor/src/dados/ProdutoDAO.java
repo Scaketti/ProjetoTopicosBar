@@ -29,15 +29,40 @@ public class ProdutoDAO {
 
     public int insereProduto(Produto p) throws Exception {
         /* Define a SQL */
-        Statement stmt = conn.createStatement();
+        Statement stmtInsert = conn.createStatement();
 
         try {
-            stmt.executeUpdate("INSERT INTO Produto (NOME, QTD, PRECO) VALUES ('"
-                    + p.getNome() + "', "
-                    + p.getQtd() + ", "
-                    + p.getPreco() + ")");
+            int qtd = count();
 
-            return 0;
+            if (qtd != -1) {
+                stmtInsert.executeUpdate("INSERT INTO Produto (IDPRODUTO, NOME, QTD, PRECO) VALUES ( "
+                        + qtd + ", '"
+                        + p.getNome() + "', "
+                        + p.getQtd() + ", "
+                        + p.getPreco() + ")");
+
+                return 0;
+            }
+            return -1;
+        } catch (SQLException Erro) {
+            JOptionPane.showMessageDialog(null, "Erro Cmdo SQL" + Erro.getMessage());
+            return -1;
+        }
+    }
+
+    public int count() throws Exception {
+        Statement stmtCount = conn.createStatement();
+
+        try {
+            ResultSet count = stmtCount.executeQuery("SELECT * FROM Produto ORDER BY IDPRODUTO DESC");
+            int qtd;
+            if (count.next()) {
+                qtd = count.getInt("IDPRODUTO") + 1;
+            } else {
+                qtd = 1;
+            }
+
+            return qtd;
         } catch (SQLException Erro) {
             JOptionPane.showMessageDialog(null, "Erro Cmdo SQL" + Erro.getMessage());
             return -1;
@@ -49,10 +74,11 @@ public class ProdutoDAO {
         Statement stmt = conn.createStatement();
 
         try {
-            stmt.executeUpdate("UPDATE Produto SET QTD = " + 
-                    p.getQtd() + ", PRECO = " + 
-                    p.getPreco() + " WHERE NOME = '" + 
-                    p.getNome() + "'");
+            stmt.executeUpdate("UPDATE Produto SET NOME = '"
+                    + p.getNome() + "', QTD = "
+                    + p.getQtd() + ", PRECO = "
+                    + p.getPreco() + " WHERE IDPRODUTO = '"
+                    + p.getIdProduto() + "'");
 
             return 0;
         } catch (SQLException Erro) {
@@ -73,35 +99,37 @@ public class ProdutoDAO {
             while (set.next()) {
                 Produto est = new Produto();
 
+                est.setIdProduto(set.getInt("idProduto"));
                 est.setNome(set.getString("nome"));
                 est.setQtd(set.getInt("qtd"));
                 est.setPreco(set.getFloat("preco"));
 
                 busca.add(est);
             }
-            
+
             set.close();
             stmt.close();
 
             return busca;
-            
+
         } catch (SQLException Erro) {
             JOptionPane.showMessageDialog(null, "Erro Cmdo SQL" + Erro.getMessage());
             return null;
         }
     }
 
-    public Produto pesquisaProduto(Produto p) throws Exception {
+    public Produto pesquisaProduto(String nomeProduto) throws Exception {
         /* Define a SQL */
         Statement stmt = conn.createStatement();
 
         try {
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Produto WHERE NOME = " + p.getNome() + ")");
-            
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Produto WHERE NOME LIKE " + nomeProduto + ")");
+
             Produto pBusca = new Produto();
-            pBusca.setNome(rs.getString("nome"));
-            pBusca.setPreco(rs.getFloat("preco"));
-            pBusca.setQtd(rs.getInt("qtd"));
+            pBusca.setIdProduto(rs.getInt("idProduto"));
+            pBusca.setNome(rs.getString("NOME"));
+            pBusca.setPreco(rs.getFloat("PRECO"));
+            pBusca.setQtd(rs.getInt("QTD"));
 
             return pBusca;
         } catch (SQLException Erro) {
@@ -110,13 +138,13 @@ public class ProdutoDAO {
         }
     }
 
-    public int excluiProduto(Produto p) throws Exception {
+    public int excluiProduto(int idProduto) throws Exception {
         /* Define a SQL */
         Statement stmt = conn.createStatement();
 
         try {
-            stmt.executeUpdate("DELETE * FROM Produto WHERE NOME = '"
-                    + p.getNome() + "')");
+            stmt.executeUpdate("DELETE FROM Produto WHERE idProduto = '"
+                    + idProduto + "'");
 
             return 0;
         } catch (SQLException Erro) {

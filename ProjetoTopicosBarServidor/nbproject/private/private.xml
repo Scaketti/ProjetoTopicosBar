@@ -12,8 +12,6 @@
         <group>
             <file>file:/home/foxdie/Documents/UTFPR/Disciplinas/Tópicos/Projeto%202/ProjetoTopicosBar/ProjetoTopicosBarServidor/src/negocio/ServidorImpl.java</file>
         </group>
-        <group name="teste">
-            <file>file:/home/foxdie/Documents/UTFPR/Disciplinas/Tópicos/Projeto%202/ProjetoTopicosBar/ProjetoTopicosBarServidor/src/dados/ProdutoDAO.java</file>
-        </group>
+        <group name="teste"/>
     </open-files>
 </project-private>

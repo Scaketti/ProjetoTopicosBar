@@ -26,6 +26,7 @@ public class Servidor {
             
             //Registra o Servidor
             Naming.rebind("rmi://" + "localhost" + ":" + porta + "/bar", servidor); 
+            System.out.println("Servidor Registrado");
             
         }catch(Exception e){
             System.out.println("Erro : Mensagem : " + e.getMessage());

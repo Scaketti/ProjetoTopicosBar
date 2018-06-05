@@ -28,8 +28,6 @@ public class Conexao {
         // Capturar a conexão
         Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
         // Retorna a conexao aberta
-        System.out.println(conn);
-        
         return conn;
     }
 }

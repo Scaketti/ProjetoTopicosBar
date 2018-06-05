@@ -11,7 +11,11 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import visao.TelaServidor;
 
@@ -21,125 +25,120 @@ import visao.TelaServidor;
  */
 public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInterface {
 
+    TelaServidor tela;
+
     public ServidorImpl(TelaServidor tela) throws RemoteException {
         super();
+        this.tela = tela;
     }
 
+    //TERMINAL 
     @Override
     public int conectarAoServidor(String nome, String ip, int porta, int numTerminal) throws RemoteException {
-        JOptionPane.showMessageDialog(null, "Nome do Cliente conectado: " + nome);
 
-        /*Boolean valido = false;
+        ClienteTerminal cConectando = new ClienteTerminal();
+        cConectando.setNumTerminal(numTerminal);
+        cConectando.setNome(nome);
+        cConectando.setIp(ip);
+        cConectando.setPorta(porta);
 
-        //Verifica se possui algum cliente conectado com o mesmo apelido
-        for (Cliente c : clientesConectados) {
-            valido = verificaApelido(apelido, c);
-            if (valido) {
-                return 1;
-            }
+        String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nome + ") conectou ao servidor.\n");
+
+        tela.setLogMsgClienteTerminal(texto);
+
+        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
+            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
         }
 
-        if (!valido) { //Caso não exista nenhum cliente com o mesmo nome, tenta conectar
-            Cliente clienteConectando = new Cliente(apelido, nome, ipCliente, portaCliente);
-            clientesConectados.add(clienteConectando);
-            tServidor.insereClienteLista(clienteConectando); //Chama método que insere o cliente na lista da tela
-            
-            for (Cliente cl : clientesConectados) { //Notifica os clientes 
-                if (!cl.getApelido().equals(apelido)) {
-                    notificarConexao(clienteConectando, cl); //Notifica a pessoa que ja está conectada
-                    notificarConexao(cl, clienteConectando); //Recebe "ping" da pessoa que ja está conectada
-                }
-            }
-            return 0;
-        }*/
         return 0;
     }
 
     @Override
     public int DesconectarDoServidor(int numTerminal) throws RemoteException {
-        /*Boolean valido = false;
 
-        //Verifica se o mesmo ja está conectado
-        for (Cliente c : clientesConectados) {
-            valido = verificaApelido(apelido, c);
-            if (valido) { //Caso ele esteja conectado, notifica a desconexão
-                for (Cliente cl : clientesConectados) {
-                    if (!cl.getApelido().equals(apelido)) {
-                        notificarDesconexao(apelido, cl);
-                    }
-                }
-                clientesConectados.remove(c);
-                tServidor.removeClienteLista(c);
-                break;
-            }
-        }*/
         return -1;
     }
 
-    @Override
-    public int conectarAoServidor(String nome, String ip, int porta) throws RemoteException {
-        JOptionPane.showMessageDialog(null, "Nome do Atendente conectado: " + nome);
+    public int realizarPedido(Produto pProduto, String nomeCliente, String ip, int porta) throws RemoteException {
 
-        /*Boolean valido = false;
+        String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nomeCliente + ") realizou um pedido.\n");
 
-        //Verifica se possui algum cliente conectado com o mesmo apelido
-        for (Cliente c : clientesConectados) {
-            valido = verificaApelido(apelido, c);
-            if (valido) {
-                return 1;
-            }
+        tela.setLogMsgClienteTerminal(texto);
+
+        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
+            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
         }
 
-        if (!valido) { //Caso não exista nenhum cliente com o mesmo nome, tenta conectar
-            Cliente clienteConectando = new Cliente(apelido, nome, ipCliente, portaCliente);
-            clientesConectados.add(clienteConectando);
-            tServidor.insereClienteLista(clienteConectando); //Chama método que insere o cliente na lista da tela
+        try {
             
-            for (Cliente cl : clientesConectados) { //Notifica os clientes 
-                if (!cl.getApelido().equals(apelido)) {
-                    notificarConexao(clienteConectando, cl); //Notifica a pessoa que ja está conectada
-                    notificarConexao(cl, clienteConectando); //Recebe "ping" da pessoa que ja está conectada
-                }
-            }
-            return 0;
-        }*/
+            ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + ip + ":" + porta + "/bar");
+            System.out.println("negocio.ServidorImpl.realizarPedido()");
+            cliente.notificaAlteracaoCardapio();
+
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+        }
+        
+        return 0;
+    }
+
+    //CAIXA
+    @Override
+    public int conectarAoServidor(String nome, String ip, int porta) throws RemoteException {
+        ClienteCaixa cConectando = new ClienteCaixa();
+        cConectando.setNome(nome);
+        cConectando.setIp(ip);
+        cConectando.setPorta(porta);
+
+        String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nome + ") conectou ao servidor.\n");
+
+        tela.setLogMsgClienteCaixa(texto);
+
+        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+        }
+
         return 0;
     }
 
     @Override
     public int DesconectarDoServidor(String ip) throws RemoteException {
-        /*Boolean valido = false;
 
-        //Verifica se o mesmo ja está conectado
-        for (Cliente c : clientesConectados) {
-            valido = verificaApelido(apelido, c);
-            if (valido) { //Caso ele esteja conectado, notifica a desconexão
-                for (Cliente cl : clientesConectados) {
-                    if (!cl.getApelido().equals(apelido)) {
-                        notificarDesconexao(apelido, cl);
-                    }
-                }
-                clientesConectados.remove(c);
-                tServidor.removeClienteLista(c);
-                break;
-            }
-        }*/
+        //tela.getLogMsgClienteCaixa().concat("Funcionário (" + nomeFuncionario + ") inseriu um novo produto.\n");
+        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+        }
+
         return -1;
     }
 
     @Override
-    public int insereProduto(Produto p, String nome) throws RemoteException {
+    public int insereProduto(Produto pNovo, String nomeFuncionario) throws RemoteException {
         try {
             Connection conn = Conexao.abrir();
             ProdutoDAO pDAO = new ProdutoDAO(conn);
 
-            System.out.println("Nome: " + p.getNome());
+            pDAO.insereProduto(pNovo);
 
-            System.out.println("retorno: " + pDAO.insereProduto(p));
-            
-            //insere log sobre o funcionario
+            String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") inseriu um novo produto (" + pNovo.getNome() + ").\n");
+
+            tela.setLogMsgClienteCaixa(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            }
 
             conn.close();
+
+            try {
+                ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1100" + "/bar");
+                System.out.println("negocio.ServidorImpl.insereProduto()");
+                cliente.notificaAlteracaoCardapio();
+
+            } catch (Exception e) {
+                System.out.println("Erro: Mensagem: " + e.getMessage());
+            }
+
             return 0;
         } catch (Exception ex) {
             System.out.println("Erro");
@@ -148,14 +147,29 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
     }
 
     @Override
-    public int alteraProduto(Produto p, String nome) throws RemoteException {
+    public int alteraProduto(Produto p, String nomeFuncionario) throws RemoteException {
         try {
             Connection conn = Conexao.abrir();
             ProdutoDAO pDAO = new ProdutoDAO(conn);
 
             pDAO.alteraProduto(p);
-            
-            //insere log sobre o funcionario
+
+            String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") alterou os dados de um produto (" + p.getNome() + ").\n");
+
+            tela.setLogMsgClienteCaixa(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            }
+
+            try {
+                ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1100" + "/bar");
+
+                cliente.notificaAlteracaoCardapio();
+
+            } catch (Exception e) {
+                System.out.println("Erro: Mensagem: " + e.getMessage());
+            }
 
             conn.close();
             return 0;
@@ -173,9 +187,7 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
             ArrayList<Produto> pBusca;
 
             pBusca = pDAO.pesquisaProduto();
-            
-            //insere log sobre o funcionario
-            
+
             conn.close();
             return pBusca;
         } catch (Exception ex) {
@@ -183,14 +195,55 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
             return null;
         }
     }
-    
+
     @Override
     public Produto pesquisaProduto(String nomeProduto, String nomeFuncionario) throws RemoteException {
+
+        String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") pesquisou um produto (" + nomeProduto + ").\n");
+
+        tela.setLogMsgClienteCaixa(texto);
+
+        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+        }
+
         return null;
     }
 
     @Override
-    public int excluiProduto(Produto p, String nome) throws RemoteException {
-        return 0;
+    public int excluiProduto(Produto pExcluir, String nomeFuncionario) throws RemoteException {
+        try {
+            Connection conn = Conexao.abrir();
+            ProdutoDAO pDAO = new ProdutoDAO(conn);
+
+            pDAO.excluiProduto(pExcluir.getIdProduto());
+
+            String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") excluiu um produto (" + pExcluir.getNome() + ").\n");
+
+            tela.setLogMsgClienteCaixa(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            }
+
+            try {
+                ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1100" + "/bar");
+                cliente.notificaAlteracaoCardapio();
+
+            } catch (Exception e) {
+                System.out.println("Erro: Mensagem: " + e.getMessage());
+            }
+            conn.close();
+            return 0;
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            return -1;
+        }
+    }
+
+    private String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 }

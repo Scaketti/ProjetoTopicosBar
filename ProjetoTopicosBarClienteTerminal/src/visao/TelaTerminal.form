@@ -125,6 +125,10 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtValorParcial">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnFinalizarConta">
       <Properties>
@@ -144,9 +148,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="167" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="300" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -167,11 +171,14 @@
             <Component class="javax.swing.JTable" name="tblItemConsumidos">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="2" rowCount="4">
-                    <Column editable="true" title="Produto" type="java.lang.String"/>
-                    <Column editable="true" title="Pre&#xe7;o" type="java.lang.Float"/>
+                  <Table columnCount="4" rowCount="4">
+                    <Column editable="true" title="ID" type="java.lang.Object"/>
+                    <Column editable="true" title="Qtd" type="java.lang.Object"/>
+                    <Column editable="true" title="Produto" type="java.lang.Object"/>
+                    <Column editable="true" title="Pre&#xe7;o" type="java.lang.Object"/>
                   </Table>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
           </SubComponents>
@@ -198,13 +205,13 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="txtPesquisar" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnPesquisar" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btnPesquisar" min="-2" pref="35" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblSelecione" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="19" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -214,7 +221,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblPesquisar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtPesquisar" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnPesquisar" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnPesquisar" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblSelecione" min="-2" max="-2" attributes="0"/>
@@ -275,6 +282,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Adicionar item"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddItemActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -293,9 +303,10 @@
             <Component class="javax.swing.JTable" name="tblCardapio">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="2" rowCount="4">
-                    <Column editable="true" title="Produto" type="java.lang.String"/>
-                    <Column editable="true" title="Pre&#xe7;o" type="java.lang.Float"/>
+                  <Table columnCount="3" rowCount="4">
+                    <Column editable="true" title="ID" type="java.lang.Object"/>
+                    <Column editable="true" title="Produto" type="java.lang.Object"/>
+                    <Column editable="true" title="Pre&#xe7;o" type="java.lang.Object"/>
                   </Table>
                 </Property>
               </Properties>
@@ -311,7 +322,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnPesquisar">
           <Properties>
-            <Property name="text" type="java.lang.String" value="."/>
+            <Property name="text" type="java.lang.String" value="="/>
           </Properties>
         </Component>
       </SubComponents>

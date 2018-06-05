@@ -56,6 +56,11 @@ public class TelaManterProdutos extends javax.swing.JFrame {
         lblPesquisaProduto.setText("Pesquisar Produto:");
 
         btnExcluir.setText("-");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnAlterar.setText(".");
         btnAlterar.addActionListener(new java.awt.event.ActionListener() {
@@ -68,13 +73,13 @@ public class TelaManterProdutos extends javax.swing.JFrame {
 
         tblProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Nome do Produto", "Quantidade", "Preço Venda"
+                "ID", "Nome do Produto", "Quantidade", "Preço Venda"
             }
         ));
         jScrollPane1.setViewportView(tblProdutos);
@@ -129,13 +134,13 @@ public class TelaManterProdutos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addComponent(jSeparator1)
         );
@@ -143,15 +148,14 @@ public class TelaManterProdutos extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblPesquisaProduto)
                         .addComponent(lblNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -171,23 +175,61 @@ public class TelaManterProdutos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFecharActionPerformed
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
-        Produto p = new Produto();
+        Produto pAlterar = new Produto();
 
         int linha = tblProdutos.getSelectedRow();
 
         if (linha != -1) {
-            p.setNome((String) tblProdutos.getValueAt(linha, 0));
-            p.setQtd((int) tblProdutos.getValueAt(linha, 1));
-            p.setPreco((Float) tblProdutos.getValueAt(linha, 2));
+            pAlterar.setIdProduto((int) tblProdutos.getValueAt(linha, 0));
+            pAlterar.setNome((String) tblProdutos.getValueAt(linha, 1));
+            pAlterar.setQtd((int) tblProdutos.getValueAt(linha, 2));
+            pAlterar.setPreco((Float) tblProdutos.getValueAt(linha, 3));
 
-            TelaInsertAlterProdutos tAlter = new TelaInsertAlterProdutos(this, c, p);
+            TelaInsertAlterProdutos tAlter = new TelaInsertAlterProdutos(this, c, pAlterar);
             tAlter.setVisible(true);
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Selecione um produto para alterar");
         }
 
 
     }//GEN-LAST:event_btnAlterarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        Produto pRemover = new Produto();
+
+        int linha = tblProdutos.getSelectedRow();
+
+        if (linha != -1) {
+            pRemover.setIdProduto((int) tblProdutos.getValueAt(linha, 0));
+            pRemover.setNome((String) tblProdutos.getValueAt(linha, 1));
+            pRemover.setQtd((int) tblProdutos.getValueAt(linha, 2));
+            pRemover.setPreco((Float) tblProdutos.getValueAt(linha, 3));
+
+            if (pRemover.getQtd() == 0) {
+
+                try { //Tenta se conectar com o servidor
+                    ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
+
+                    int validacao = servidor.excluiProduto(pRemover, c.getNome());
+
+                    if (validacao == 0) {
+                        JOptionPane.showMessageDialog(null, "Produto removido com sucesso!");
+                        getProdutos();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Falha ao remover produto!");
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Erro: Mensagem: " + e.getMessage());
+                }
+            }else{
+                JOptionPane.showMessageDialog(null, "Estoque precisa ser zerado para exclusão!");
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Selecione um produto para excluir!");
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
 
     public void getProdutos() {
         try {
@@ -201,7 +243,7 @@ public class TelaManterProdutos extends javax.swing.JFrame {
             }
 
             for (Produto p : pBusca) {
-                modeloTable.addRow(new Object[]{p.getNome(), p.getQtd(), p.getPreco()});
+                modeloTable.addRow(new Object[]{p.getIdProduto(), p.getNome(), p.getQtd(), p.getPreco()});
             }
 
         } catch (Exception e) {

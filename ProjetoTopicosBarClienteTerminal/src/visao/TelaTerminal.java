@@ -5,23 +5,72 @@
  */
 package visao;
 
+import java.rmi.Naming;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import negocio.ClienteTerminal;
+import negocio.Pedido;
+import negocio.Produto;
+import negocio.ServidorBarInterface;
 
 /**
  *
  * @author foxdie
  */
 public class TelaTerminal extends javax.swing.JFrame {
+
     ClienteTerminal c = null;
-    
+    ArrayList<Produto> pConsumido = new ArrayList();
+    float valorParcial = 0;
+
     /**
      * Creates new form TelaTerminal
      */
     public TelaTerminal(ClienteTerminal c) {
         initComponents();
         this.c = c;
-        txtNMesa.setText(""+c.getNumTerminal());
+        txtNMesa.setText("" + c.getNumTerminal());
         txtNomeCliente.setText(c.getNome());
+        getCardapio();
+        atualizaListaConsumidos();
+    }
+
+    public void getCardapio() {
+        try {
+            ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
+            ArrayList<Produto> pBusca = servidor.pesquisaProduto(c.getNome());
+
+            DefaultTableModel modeloTable = (DefaultTableModel) getTblCardapio().getModel();
+
+            while (modeloTable.getRowCount() > 0) {
+                modeloTable.removeRow(0);
+            }
+
+            for (Produto p : pBusca) {
+                modeloTable.addRow(new Object[]{p.getIdProduto(), p.getNome(), p.getPreco()});
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+        }
+    }
+
+    public void atualizaListaConsumidos() {
+        try {
+            DefaultTableModel modeloTable = (DefaultTableModel) getTblItemConsumidos().getModel();
+
+            while (modeloTable.getRowCount() > 0) {
+                modeloTable.removeRow(0);
+            }
+
+            for (Produto p : pConsumido) {
+                modeloTable.addRow(new Object[]{p.getIdProduto(), p.getQtd(), p.getNome(), p.getPreco()});
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+        }
     }
 
     /**
@@ -70,29 +119,25 @@ public class TelaTerminal extends javax.swing.JFrame {
 
         lblValorParcial.setText("Valor parcial:");
 
+        txtValorParcial.setText("0");
+        txtValorParcial.setEnabled(false);
+
         btnFinalizarConta.setText("Finalizar Conta");
 
         pnlItemConsumidos.setBorder(javax.swing.BorderFactory.createTitledBorder("Itens Consumidos"));
 
         tblItemConsumidos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Produto", "Preço"
+                "ID", "Qtd", "Produto", "Preço"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Float.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        ));
+        tblItemConsumidos.setToolTipText("");
         jScrollPane1.setViewportView(tblItemConsumidos);
 
         javax.swing.GroupLayout pnlItemConsumidosLayout = new javax.swing.GroupLayout(pnlItemConsumidos);
@@ -100,9 +145,9 @@ public class TelaTerminal extends javax.swing.JFrame {
         pnlItemConsumidosLayout.setHorizontalGroup(
             pnlItemConsumidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlItemConsumidosLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlItemConsumidosLayout.setVerticalGroup(
             pnlItemConsumidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,6 +161,11 @@ public class TelaTerminal extends javax.swing.JFrame {
         lblQtd.setText("Qtd.");
 
         btnAddItem.setText("Adicionar item");
+        btnAddItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddItemActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlRealizarPedidoLayout = new javax.swing.GroupLayout(pnlRealizarPedido);
         pnlRealizarPedido.setLayout(pnlRealizarPedidoLayout);
@@ -144,48 +194,39 @@ public class TelaTerminal extends javax.swing.JFrame {
 
         tblCardapio.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Produto", "Preço"
+                "ID", "Produto", "Preço"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Float.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        ));
         jScrollPane2.setViewportView(tblCardapio);
 
         lblPesquisar.setText("Pesquisar:");
 
-        btnPesquisar.setText(".");
+        btnPesquisar.setText("=");
 
         javax.swing.GroupLayout pnlCardapioLayout = new javax.swing.GroupLayout(pnlCardapio);
         pnlCardapio.setLayout(pnlCardapioLayout);
         pnlCardapioLayout.setHorizontalGroup(
             pnlCardapioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCardapioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(pnlRealizarPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addGroup(pnlCardapioLayout.createSequentialGroup()
-                    .addGap(8, 8, 8)
-                    .addComponent(lblPesquisar)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(txtPesquisar)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(8, 8, 8)))
+            .addComponent(pnlRealizarPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(pnlCardapioLayout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(lblPesquisar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtPesquisar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8))
             .addGroup(pnlCardapioLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblSelecione)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlCardapioLayout.setVerticalGroup(
             pnlCardapioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,7 +234,7 @@ public class TelaTerminal extends javax.swing.JFrame {
                 .addGroup(pnlCardapioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPesquisar)
                     .addComponent(txtPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPesquisar))
+                    .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblSelecione)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -262,6 +303,51 @@ public class TelaTerminal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddItemActionPerformed
+        if (tblCardapio.getSelectedRow() != -1) {
+            int novo = 1;
+            int validacao = 0;
+
+            Produto novoProduto = new Produto();
+            int linha = tblCardapio.getSelectedRow();
+            novoProduto.setIdProduto((int) tblCardapio.getValueAt(linha, 0));
+            novoProduto.setNome((String) tblCardapio.getValueAt(linha, 1));
+            novoProduto.setPreco((float) tblCardapio.getValueAt(linha, 2));
+            novoProduto.setQtd(Integer.parseInt(txtQtd.getText()));
+
+            txtQtd.setText("");
+
+            try {
+                ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
+                validacao = servidor.realizarPedido(novoProduto, c.getNome(), c.getIp(), c.getPorta());
+
+            } catch (Exception e) {
+                System.out.println("Erro: Mensagem: " + e.getMessage());
+            }
+
+            if (validacao == 0) {
+                for (Produto produtoConsumido : pConsumido) {
+                    if (produtoConsumido.getIdProduto() == novoProduto.getIdProduto()) {
+                        produtoConsumido.setQtd(produtoConsumido.getQtd() + novoProduto.getQtd());
+                        novo = 0;
+                        break;
+                    }
+                }
+
+                if (novo == 1) {
+                    pConsumido.add(novoProduto);
+                }
+                valorParcial += novoProduto.getPreco() * novoProduto.getQtd();
+                txtValorParcial.setText(valorParcial + "");
+
+                atualizaListaConsumidos();
+            } else {
+                JOptionPane.showMessageDialog(null, "Não foi possível realizar o pedido!");
+            }
+        }
+    }//GEN-LAST:event_btnAddItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddItem;
     private javax.swing.JButton btnFinalizarConta;
@@ -288,4 +374,32 @@ public class TelaTerminal extends javax.swing.JFrame {
     private javax.swing.JTextField txtQtd;
     private javax.swing.JTextField txtValorParcial;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the tblCardapio
+     */
+    public javax.swing.JTable getTblCardapio() {
+        return tblCardapio;
+    }
+
+    /**
+     * @param tblCardapio the tblCardapio to set
+     */
+    public void setTblCardapio(javax.swing.JTable tblCardapio) {
+        this.tblCardapio = tblCardapio;
+    }
+
+    /**
+     * @return the tblItemConsumidos
+     */
+    public javax.swing.JTable getTblItemConsumidos() {
+        return tblItemConsumidos;
+    }
+
+    /**
+     * @param tblItemConsumidos the tblItemConsumidos to set
+     */
+    public void setTblItemConsumidos(javax.swing.JTable tblItemConsumidos) {
+        this.tblItemConsumidos = tblItemConsumidos;
+    }
 }

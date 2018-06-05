@@ -74,9 +74,10 @@ public class ClienteCaixa {
 
             //Registra o Servidor
             Naming.rebind("rmi://" + getIp() + ":" + getPorta() + "/bar", cliente);
-
+            System.out.println("Cliente Caixa Registrado");
+            
         } catch (Exception e) {
-            System.out.println("Erro : Mensagem : " + e.getMessage());
+            System.out.println("Erro: Mensagem : " + e.getMessage());
         }
     }
 }

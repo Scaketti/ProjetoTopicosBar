@@ -22,24 +22,28 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
     TelaManterProdutos tManter;
     ClienteCaixa c;
     Produto pAlter = null;
+    String nomeProdutoAntigo;
 
     /**
      * Creates new form TelaInsercaoProdutos
      */
+    //Inserir
     public TelaInsertAlterProdutos(TelaManterProdutos tManter, ClienteCaixa c) {
         initComponents();
         this.tManter = tManter;
         this.c = c;
     }
-
+    
+    //Alterar
     public TelaInsertAlterProdutos(TelaManterProdutos tManter, ClienteCaixa c, Produto p) {
         initComponents();
         this.tManter = tManter;
         this.c = c;
         this.pAlter = p;
 
+        txtIdProduto.setText(p.getIdProduto() + "");
         txtNomeProduto.setText(p.getNome());
-        txtNomeProduto.setEnabled(false);
+        nomeProdutoAntigo = p.getNome();
         txtQtd.setText(p.getQtd() + "");
         txtPreco.setText(p.getPreco() + "");
     }
@@ -61,6 +65,8 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
         txtPreco = new javax.swing.JTextField();
         btnConfirmar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        lblIdProduto = new javax.swing.JLabel();
+        txtIdProduto = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,35 +90,47 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
             }
         });
 
+        lblIdProduto.setText("ID:");
+
+        txtIdProduto.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblPreco)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnConfirmar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCancelar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblNomeProduto)
+                                    .addComponent(lblQtd)
+                                    .addComponent(lblPreco))
+                                .addGap(8, 8, 8)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtIdProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNomeProduto)
-                            .addComponent(lblQtd))
-                        .addGap(8, 8, 8)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnConfirmar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(lblIdProduto)))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblIdProduto)
+                    .addComponent(txtIdProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNomeProduto)
                     .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -128,7 +146,7 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmar)
                     .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -148,12 +166,17 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
             try { //Tenta se conectar com o servidor
                 ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
 
+                System.out.println(p);
                 int validacao = servidor.insereProduto(p, c.getNome());
 
                 if (validacao == 0) {
                     JOptionPane.showMessageDialog(null, "Produto inserido com sucesso!");
                     getProdutos();
 
+                    this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Não foi possível inserir o produto, tente novamente!");
+                    
                     this.dispose();
                 }
 
@@ -175,6 +198,10 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
                     getProdutos();
 
                     this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Não foi possível alterar o produto, tente novamente!");
+                    
+                    this.dispose();
                 }
 
             } catch (Exception e) {
@@ -195,7 +222,7 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
             }
 
             for (Produto p : pBusca) {
-                modeloTable.addRow(new Object[]{p.getNome(), p.getQtd(), p.getPreco()});
+                modeloTable.addRow(new Object[]{p.getIdProduto(), p.getNome(), p.getQtd(), p.getPreco()});
             }
 
         } catch (Exception e) {
@@ -207,9 +234,11 @@ public class TelaInsertAlterProdutos extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
+    private javax.swing.JLabel lblIdProduto;
     private javax.swing.JLabel lblNomeProduto;
     private javax.swing.JLabel lblPreco;
     private javax.swing.JLabel lblQtd;
+    private javax.swing.JTextField txtIdProduto;
     private javax.swing.JTextField txtNomeProduto;
     private javax.swing.JTextField txtPreco;
     private javax.swing.JTextField txtQtd;

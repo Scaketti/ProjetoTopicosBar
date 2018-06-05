@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @author Scaketti
  */
 public class Produto implements Serializable{
+    private int idProduto;
     private String nome;
     private int qtd;
     private float preco;
@@ -56,6 +57,20 @@ public class Produto implements Serializable{
      */
     public void setPreco(float preco) {
         this.preco = preco;
+    }
+
+    /**
+     * @return the idProduto
+     */
+    public int getIdProduto() {
+        return idProduto;
+    }
+
+    /**
+     * @param idProduto the idProduto to set
+     */
+    public void setIdProduto(int idProduto) {
+        this.idProduto = idProduto;
     }
     
 }

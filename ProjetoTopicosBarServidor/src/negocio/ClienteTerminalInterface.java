@@ -14,4 +14,5 @@ import java.rmi.RemoteException;
  */
 public interface ClienteTerminalInterface extends Remote {
 
+    public int notificaAlteracaoCardapio() throws RemoteException;
 }

@@ -23,6 +23,7 @@ public class TelaCaixa extends javax.swing.JFrame {
     public TelaCaixa(ClienteCaixa c) {
         initComponents();
         this.c = c;
+        txtNomeFunc.setText(c.getNome());
     }
 
     /**

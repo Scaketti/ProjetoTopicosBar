@@ -5,16 +5,58 @@
  */
 package negocio;
 
-import java.rmi.Naming;
-import sun.rmi.registry.RegistryImpl;
-
 /**
  *
  * @author Scaketti
  */
-public class ClienteCaixa extends Cliente{
+public class ClienteCaixa {
+
+    private String nome;
+    private String ip = "127.0.0.1";
+    private int porta = 1101;
     
     public ClienteCaixa(){
-        super();
+
+    }
+    /**
+     * @return the nome
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    /**
+     * @param nome the nome to set
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * @return the ip
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
+     * @param ip the ip to set
+     */
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    /**
+     * @return the porta
+     */
+    public int getPorta() {
+        return porta;
+    }
+
+    /**
+     * @param porta the porta to set
+     */
+    public void setPorta(int porta) {
+        this.porta = porta;
     }
 }

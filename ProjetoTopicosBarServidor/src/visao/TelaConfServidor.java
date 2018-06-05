@@ -14,12 +14,10 @@ import negocio.Servidor;
  */
 public class TelaConfServidor extends javax.swing.JFrame {
     TelaServidor telaServidor;
-    Servidor servidor;
     
     /** Creates new form TelaConfServidor */
-    public TelaConfServidor(Servidor servidor, TelaServidor telaServidor) {
+    public TelaConfServidor(TelaServidor telaServidor) {
         initComponents();
-        this.servidor = servidor;
         this.telaServidor = telaServidor;
     }
 
@@ -96,7 +94,7 @@ public class TelaConfServidor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-        servidor = new Servidor(Integer.parseInt(txtPorta.getText()), telaServidor);
+        Servidor servidor = new Servidor(Integer.parseInt(txtPorta.getText()), telaServidor);
         
         telaServidor.getBtnClientesConectados().setEnabled(true);
         telaServidor.getCmbTipoMovimentacao().setEnabled(true);
