@@ -13,10 +13,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.JOptionPane;
 import visao.TelaServidor;
 
 /**
@@ -27,6 +25,9 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
 
     TelaServidor tela;
 
+    ArrayList<Pedido> listaPedidos = new ArrayList();
+    int nPedidoTotal = 0;
+
     public ServidorImpl(TelaServidor tela) throws RemoteException {
         super();
         this.tela = tela;
@@ -35,81 +36,139 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
     //TERMINAL 
     @Override
     public int conectarAoServidor(String nome, String ip, int porta, int numTerminal) throws RemoteException {
+        try {
+            ClienteTerminal cConectando = new ClienteTerminal(nome);
+            cConectando.setNumTerminal(numTerminal);
+            cConectando.setIp(ip);
+            cConectando.setPorta(porta);
 
-        ClienteTerminal cConectando = new ClienteTerminal();
-        cConectando.setNumTerminal(numTerminal);
-        cConectando.setNome(nome);
-        cConectando.setIp(ip);
-        cConectando.setPorta(porta);
+            tela.getcTerminalConectados().add(cConectando);
 
-        String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nome + ") conectou ao servidor.\n");
+            String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nome + ") conectou ao servidor.\n");
 
-        tela.setLogMsgClienteTerminal(texto);
+            tela.setLogMsgClienteTerminal(texto);
 
-        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
-            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
+            }
+
+            return 0;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return 1;
         }
-
-        return 0;
     }
 
     @Override
-    public int DesconectarDoServidor(int numTerminal) throws RemoteException {
+    public int DesconectarDoServidor(String nome, int nTerminal, ArrayList<Produto> listaProdutos, float valorTotal) throws RemoteException {
+        for (ClienteTerminal c : tela.getcTerminalConectados()) {
+            if (c.getNome().equals(nome)) {
+                Pedido novoPedido = new Pedido(c, listaProdutos, valorTotal);
+                novoPedido.setnPedido(nPedidoTotal++);
 
-        return -1;
+                listaPedidos.add(novoPedido);
+
+                try {
+                    for (ClienteCaixa caixa : tela.getcCaixaConectados()) {
+                        ClienteCaixaInterface cliente = (ClienteCaixaInterface) Naming.lookup("rmi://" + caixa.getIp() + ":" + caixa.getPorta() + "/bar");
+                        cliente.atualizaPedidos(listaPedidos);
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Erro: Mensagem: " + e.getMessage());
+                }
+
+                tela.getcTerminalConectados().remove(c);
+
+                String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nome + "), mesa (" + nTerminal + ") fechou a conta e desconectou do servidor.\n");
+
+                tela.setLogMsgClienteTerminal(texto);
+
+                if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
+                    tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
+                }
+                return 0;
+            }
+        }
+        return 1;
     }
 
-    public int realizarPedido(Produto pProduto, String nomeCliente, String ip, int porta) throws RemoteException {
+    @Override
+    public int requisitarProduto(Produto pProduto, String nomeCliente, String ip, int porta) throws RemoteException {
+        Produto produtoBanco = pesquisaProduto(pProduto.getNome(), "Sistema");
 
-        String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nomeCliente + ") realizou um pedido.\n");
+        if ((produtoBanco.getQtd() - pProduto.getQtd()) >= 0) {
 
-        tela.setLogMsgClienteTerminal(texto);
+            produtoBanco.setQtd(produtoBanco.getQtd() - pProduto.getQtd());
+            alteraProduto(produtoBanco, "Sistema");
 
-        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
-            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
+            String texto = tela.getLogMsgClienteTerminal().concat("[" + getDateTime() + "] Cliente (" + nomeCliente + ") pediu um novo produto.\n");
+
+            tela.setLogMsgClienteTerminal(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Clientes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteTerminal());
+            }
+
+            try {
+                for (ClienteTerminal c : tela.getcTerminalConectados()) {
+                    ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + c.getIp() + ":" + c.getPorta() + "/bar");
+                    cliente.notificaAlteracaoCardapio();
+                }
+            } catch (Exception e) {
+                System.out.println("Erro: Mensagem: " + e.getMessage());
+            }
+            return 0;
         }
-
-        try {
-            
-            ClienteTerminalInterface cliente = (ClienteTerminalInterface) Naming.lookup("rmi://" + ip + ":" + porta + "/bar");
-            System.out.println("negocio.ServidorImpl.realizarPedido()");
-            cliente.notificaAlteracaoCardapio();
-
-        } catch (Exception e) {
-            System.out.println("Erro: Mensagem: " + e.getMessage());
-        }
-        
-        return 0;
+        return 1;
     }
 
     //CAIXA
     @Override
     public int conectarAoServidor(String nome, String ip, int porta) throws RemoteException {
-        ClienteCaixa cConectando = new ClienteCaixa();
-        cConectando.setNome(nome);
-        cConectando.setIp(ip);
-        cConectando.setPorta(porta);
+        try {
+            ClienteCaixa cConectando = new ClienteCaixa();
 
-        String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nome + ") conectou ao servidor.\n");
+            cConectando.setNome(nome);
+            cConectando.setIp(ip);
+            cConectando.setPorta(porta);
 
-        tela.setLogMsgClienteCaixa(texto);
+            tela.getcCaixaConectados().add(cConectando);
 
-        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
-            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nome + ") conectou ao servidor.\n");
+
+            tela.setLogMsgClienteCaixa(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            }
+
+            return 0;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return 1;
         }
-
-        return 0;
     }
 
     @Override
-    public int DesconectarDoServidor(String ip) throws RemoteException {
+    public int DesconectarDoServidor(String nomeFuncionario) throws RemoteException {
 
-        //tela.getLogMsgClienteCaixa().concat("Funcionário (" + nomeFuncionario + ") inseriu um novo produto.\n");
-        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
-            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+        for (ClienteCaixa c : tela.getcCaixaConectados()) {
+            if (c.getNome().equals(nomeFuncionario)) {
+                tela.getcCaixaConectados().remove(c);
+
+                String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") inseriu um novo produto.\n");
+
+                tela.setLogMsgClienteCaixa(texto);
+
+                if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                    tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+                }
+
+                return 0;
+            }
         }
-
-        return -1;
+        return 1;
     }
 
     @Override
@@ -199,15 +258,33 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
     @Override
     public Produto pesquisaProduto(String nomeProduto, String nomeFuncionario) throws RemoteException {
 
-        String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") pesquisou um produto (" + nomeProduto + ").\n");
+        try {
+            Connection conn = Conexao.abrir();
+            ProdutoDAO pDAO = new ProdutoDAO(conn);
+            ArrayList<Produto> pBusca;
+            Produto produtoEncontrado = null;
+            pBusca = pDAO.pesquisaProduto();
 
-        tela.setLogMsgClienteCaixa(texto);
+            for (Produto p : pBusca) {
+                if (p.getNome().equals(nomeProduto)) {
+                    produtoEncontrado = p;
 
-        if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
-            tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+                    String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") pesquisou um produto (" + nomeProduto + ").\n");
+
+                    tela.setLogMsgClienteCaixa(texto);
+
+                    if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                        tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+                    }
+                }
+            }
+
+            conn.close();
+            return produtoEncontrado;
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            return null;
         }
-
-        return null;
     }
 
     @Override
@@ -238,6 +315,37 @@ public class ServidorImpl extends UnicastRemoteObject implements ServidorBarInte
         } catch (Exception ex) {
             System.out.println("Erro");
             return -1;
+        }
+    }
+
+    @Override
+    public int finalizaConta(Pedido contaFechada, String nomeFuncionario) throws RemoteException {
+
+        for (Pedido p : listaPedidos) {
+            if (p.getnPedido() == contaFechada.getnPedido()) {
+                listaPedidos.remove(p);
+            }
+        }
+
+        try {
+            for (ClienteCaixa caixa : tela.getcCaixaConectados()) {
+                ClienteCaixaInterface cliente = (ClienteCaixaInterface) Naming.lookup("rmi://" + caixa.getIp() + ":" + caixa.getPorta() + "/bar");
+                cliente.atualizaPedidos(listaPedidos);
+            }
+
+            String texto = tela.getLogMsgClienteCaixa().concat("[" + getDateTime() + "] Funcionário (" + nomeFuncionario + ") fechou uma conta da mesa " + contaFechada.getMesa().getNumTerminal() + ".\n");
+
+            tela.setLogMsgClienteCaixa(texto);
+
+            if (tela.getCmbTipoMovimentacao().getItemAt(tela.getCmbTipoMovimentacao().getSelectedIndex()).equals("Atendentes")) {
+                tela.getTxtMovimentacao().setText(tela.getLogMsgClienteCaixa());
+            }
+
+            return 0;
+
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+            return 1;
         }
     }
 

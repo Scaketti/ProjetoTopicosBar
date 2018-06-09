@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import negocio.ClienteTerminal;
-import negocio.Pedido;
 import negocio.Produto;
 import negocio.ServidorBarInterface;
 
@@ -48,7 +47,9 @@ public class TelaTerminal extends javax.swing.JFrame {
             }
 
             for (Produto p : pBusca) {
-                modeloTable.addRow(new Object[]{p.getIdProduto(), p.getNome(), p.getPreco()});
+                if (p.getQtd() > 0) {
+                    modeloTable.addRow(new Object[]{p.getIdProduto(), p.getNome(), p.getPreco()});
+                }
             }
 
         } catch (Exception e) {
@@ -123,6 +124,11 @@ public class TelaTerminal extends javax.swing.JFrame {
         txtValorParcial.setEnabled(false);
 
         btnFinalizarConta.setText("Finalizar Conta");
+        btnFinalizarConta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFinalizarContaActionPerformed(evt);
+            }
+        });
 
         pnlItemConsumidos.setBorder(javax.swing.BorderFactory.createTitledBorder("Itens Consumidos"));
 
@@ -307,7 +313,7 @@ public class TelaTerminal extends javax.swing.JFrame {
     private void btnAddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddItemActionPerformed
         if (tblCardapio.getSelectedRow() != -1) {
             int novo = 1;
-            int validacao = 0;
+            int validacao;
 
             Produto novoProduto = new Produto();
             int linha = tblCardapio.getSelectedRow();
@@ -320,10 +326,11 @@ public class TelaTerminal extends javax.swing.JFrame {
 
             try {
                 ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
-                validacao = servidor.realizarPedido(novoProduto, c.getNome(), c.getIp(), c.getPorta());
+                validacao = servidor.requisitarProduto(novoProduto, c.getNome(), c.getIp(), c.getPorta());
 
             } catch (Exception e) {
                 System.out.println("Erro: Mensagem: " + e.getMessage());
+                validacao = 1;
             }
 
             if (validacao == 0) {
@@ -347,6 +354,20 @@ public class TelaTerminal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnAddItemActionPerformed
+
+    private void btnFinalizarContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarContaActionPerformed
+        try {
+            ServidorBarInterface servidor = (ServidorBarInterface) Naming.lookup("rmi://" + "127.0.0.1" + ":" + "1099" + "/bar");
+            int validacao = servidor.DesconectarDoServidor(c.getNome(), c.getNumTerminal(), pConsumido, Float.parseFloat(txtValorParcial.getText()));
+            if(validacao == 0){
+                this.dispose();
+                TelaTConexao telaLogin = new TelaTConexao();
+                telaLogin.setVisible(true);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnFinalizarContaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddItem;

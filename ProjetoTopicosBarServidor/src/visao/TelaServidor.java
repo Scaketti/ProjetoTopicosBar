@@ -140,7 +140,7 @@ public class TelaServidor extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfServidorActionPerformed
 
     private void btnClientesConectadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesConectadosActionPerformed
-        TelaCConectados tCliente = new TelaCConectados();
+        TelaCConectados tCliente = new TelaCConectados(cTerminalConectados, cCaixaConectados);
         tCliente.setVisible(true);
     }//GEN-LAST:event_btnClientesConectadosActionPerformed
 

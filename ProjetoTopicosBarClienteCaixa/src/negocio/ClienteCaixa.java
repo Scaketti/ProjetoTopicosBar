@@ -5,6 +5,7 @@
  */
 package negocio;
 
+import java.io.Serializable;
 import java.rmi.Naming;
 import sun.rmi.registry.RegistryImpl;
 import visao.TelaCaixa;
@@ -13,7 +14,7 @@ import visao.TelaCaixa;
  *
  * @author Scaketti
  */
-public class ClienteCaixa {
+public class ClienteCaixa implements Serializable{
 
     private String nome;
     private String ip = "127.0.0.1";

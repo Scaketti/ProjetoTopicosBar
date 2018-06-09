@@ -5,6 +5,7 @@
  */
 package negocio;
 
+import java.io.Serializable;
 import java.rmi.Naming;
 import sun.rmi.registry.RegistryImpl;
 import visao.TelaTerminal;
@@ -19,9 +20,9 @@ public class ClienteTerminal{
     private String ip = "127.0.0.1";
     private int porta = 1100;
     
-    public ClienteTerminal(int numTerminal, String nome){
+    public ClienteTerminal(String nome){
         this.nome = nome;
-        this.numTerminal = numTerminal;
+        this.numTerminal = porta;
     }
     
     /**

@@ -7,15 +7,24 @@ package negocio;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import visao.TelaCaixa;
 
 /**
  *
- * @author foxdie
+ * @author Scaketti
  */
-public class ClienteImpl extends UnicastRemoteObject implements ClienteCaixaInterface{
+public class ClienteImpl extends UnicastRemoteObject implements ClienteCaixaInterface{    
+    TelaCaixa tela;
     
     public ClienteImpl(TelaCaixa tCliente) throws RemoteException{
         super();
+        tela = tCliente;
+    }
+    
+    @Override
+    public void atualizaPedidos(ArrayList<Pedido> pedidos) throws RemoteException{
+        tela.setListaPedido(pedidos);
     }
 }

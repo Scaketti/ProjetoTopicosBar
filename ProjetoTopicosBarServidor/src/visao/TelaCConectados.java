@@ -5,17 +5,49 @@
  */
 package visao;
 
+import java.util.ArrayList;
+import negocio.ClienteCaixa;
+import negocio.ClienteTerminal;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Scaketti
  */
 public class TelaCConectados extends javax.swing.JFrame {
 
+    ArrayList<ClienteTerminal> cTerminalConectados = null;
+    ArrayList<ClienteCaixa> cCaixaConectados = null;
     /**
      * Creates new form TelaCConectados
      */
-    public TelaCConectados() {
+    public TelaCConectados(ArrayList<ClienteTerminal> cTerminalConectados, ArrayList<ClienteCaixa> cCaixaConectados) {
         initComponents();
+        
+        this.cTerminalConectados = cTerminalConectados;
+        this.cCaixaConectados = cCaixaConectados;
+        getClientes();
+    }
+    
+    public void getClientes() {
+        try {
+            DefaultTableModel modeloTable = (DefaultTableModel) getTblClientes().getModel();
+
+            while (modeloTable.getRowCount() > 0) {
+                modeloTable.removeRow(0);
+            }
+
+            for (ClienteTerminal c : cTerminalConectados) {
+               modeloTable.addRow(new Object[]{c.getNome(), "Cliente Mesa: " + c.getNumTerminal()});
+            }
+            
+            for (ClienteCaixa c : cCaixaConectados) {
+               modeloTable.addRow(new Object[]{c.getNome(), "Funcionário"});
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro: Mensagem: " + e.getMessage());
+        }
     }
 
     /**
@@ -29,13 +61,13 @@ public class TelaCConectados extends javax.swing.JFrame {
 
         jpnlClientes = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtbClientes = new javax.swing.JTable();
+        tblClientes = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jpnlClientes.setBorder(javax.swing.BorderFactory.createTitledBorder("Clientes Conectados"));
 
-        jtbClientes.setModel(new javax.swing.table.DefaultTableModel(
+        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -46,7 +78,7 @@ public class TelaCConectados extends javax.swing.JFrame {
                 "Nome", "Tipo"
             }
         ));
-        jScrollPane1.setViewportView(jtbClientes);
+        jScrollPane1.setViewportView(tblClientes);
 
         javax.swing.GroupLayout jpnlClientesLayout = new javax.swing.GroupLayout(jpnlClientes);
         jpnlClientes.setLayout(jpnlClientesLayout);
@@ -81,6 +113,20 @@ public class TelaCConectados extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel jpnlClientes;
-    private javax.swing.JTable jtbClientes;
+    private javax.swing.JTable tblClientes;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the tblClientes
+     */
+    public javax.swing.JTable getTblClientes() {
+        return tblClientes;
+    }
+
+    /**
+     * @param tblClientes the tblClientes to set
+     */
+    public void setTblClientes(javax.swing.JTable tblClientes) {
+        this.tblClientes = tblClientes;
+    }
 }

@@ -43,6 +43,7 @@ public class TelaCConexao extends javax.swing.JFrame {
         lblNomeFunc = new javax.swing.JLabel();
         txtNomeFunc = new javax.swing.JTextField();
         btnConectar = new javax.swing.JButton();
+        txtPorta = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -66,7 +67,9 @@ public class TelaCConexao extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNomeFunc)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNomeFunc, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)))
+                        .addComponent(txtNomeFunc, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPorta, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -75,7 +78,8 @@ public class TelaCConexao extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNomeFunc)
-                    .addComponent(txtNomeFunc, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNomeFunc, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPorta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnConectar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -86,6 +90,7 @@ public class TelaCConexao extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         c = new ClienteCaixa(txtNomeFunc.getText());
+        c.setPorta(Integer.parseInt(txtPorta.getText()));
         tCaixa = new TelaCaixa(c);
         c.registraCliente(tCaixa);
         
@@ -144,5 +149,6 @@ public class TelaCConexao extends javax.swing.JFrame {
     private javax.swing.JButton btnConectar;
     private javax.swing.JLabel lblNomeFunc;
     private javax.swing.JTextField txtNomeFunc;
+    private javax.swing.JTextField txtPorta;
     // End of variables declaration//GEN-END:variables
 }

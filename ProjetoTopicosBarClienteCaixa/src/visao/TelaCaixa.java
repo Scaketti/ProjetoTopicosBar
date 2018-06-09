@@ -6,9 +6,11 @@
 package visao;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import negocio.ClienteCaixa;
+import negocio.Pedido;
 import negocio.ServidorBarInterface;
 
 /**
@@ -17,8 +19,11 @@ import negocio.ServidorBarInterface;
  */
 public class TelaCaixa extends javax.swing.JFrame {
     ClienteCaixa c;
+    private ArrayList<Pedido> listaPedido = new ArrayList();
+    
     /**
      * Creates new form TelaTerminal
+     * @param c
      */
     public TelaCaixa(ClienteCaixa c) {
         initComponents();
@@ -66,6 +71,11 @@ public class TelaCaixa extends javax.swing.JFrame {
         });
 
         btnFinalizarConta.setText("Finalizar Conta");
+        btnFinalizarConta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFinalizarContaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,6 +128,11 @@ public class TelaCaixa extends javax.swing.JFrame {
         tManter.setVisible(true);
     }//GEN-LAST:event_btnManterProdutosActionPerformed
 
+    private void btnFinalizarContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarContaActionPerformed
+        TelaFinalizaConta tFinaliza = new TelaFinalizaConta(getListaPedido(), c);
+        tFinaliza.setVisible(true);
+    }//GEN-LAST:event_btnFinalizarContaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDesconectar;
     private javax.swing.JButton btnFinalizarConta;
@@ -127,4 +142,18 @@ public class TelaCaixa extends javax.swing.JFrame {
     private javax.swing.JLabel lblNomeFunc;
     private javax.swing.JTextField txtNomeFunc;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the listaPedido
+     */
+    public ArrayList<Pedido> getListaPedido() {
+        return listaPedido;
+    }
+
+    /**
+     * @param listaPedido the listaPedido to set
+     */
+    public void setListaPedido(ArrayList<Pedido> listaPedido) {
+        this.listaPedido = listaPedido;
+    }
 }

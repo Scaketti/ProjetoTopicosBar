@@ -23,9 +23,9 @@ public interface ServidorBarInterface extends Remote {
 
     //Desconecta terminal do servidor
     //Retorna o valor 0 se sucesso e 1 caso falha
-    public int DesconectarDoServidor(int numTerminal) throws RemoteException;
+    public int DesconectarDoServidor(String nome, int nTerminal, ArrayList<Produto> listaProdutos, float valorTotal) throws RemoteException;
 
-    public int realizarPedido(Produto pProduto, String nomeCliente, String ip, int porta) throws RemoteException;
+    public int requisitarProduto(Produto pProduto, String nomeCliente, String ip, int porta) throws RemoteException;
     
     
     //CAIXA
@@ -36,7 +36,7 @@ public interface ServidorBarInterface extends Remote {
 
     //Desconecta caixa do servidor
     //Retorna o valor 0 se sucesso e 1 caso falha
-    public int DesconectarDoServidor(String ip) throws RemoteException;
+    public int DesconectarDoServidor(String nomeFuncionario) throws RemoteException;
     
     //Insere produto no estoque
     //Retorna o valor 0 se sucesso e 1 caso falha
@@ -57,4 +57,6 @@ public interface ServidorBarInterface extends Remote {
     //Exclui produto do estoque
     //Retorna o valor 0 se sucesso e 1 caso falha
     public int excluiProduto(Produto pExcluir, String nomeFuncionario) throws RemoteException;
+    
+    public int finalizaConta(Pedido contaFechada, String nomeFuncionario) throws RemoteException;
 }

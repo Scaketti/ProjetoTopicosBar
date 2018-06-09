@@ -5,11 +5,13 @@
  */
 package negocio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Scaketti
  */
-public class ClienteCaixa {
+public class ClienteCaixa implements Serializable{
 
     private String nome;
     private String ip = "127.0.0.1";
